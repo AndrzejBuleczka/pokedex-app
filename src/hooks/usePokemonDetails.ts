@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import type { PokemonBasic } from "../types/pokemon";
+import type { PokemonDetails } from "../types/pokemon";
 
-export function useAllPokemonList() {
-  const [data, setData] = useState<PokemonBasic[]>([]);
+export function usePokemonDetails(name: string) {
+  const [data, setData] = useState<PokemonDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchAllPokemon = async () => {
+    const fetchDetails = async () => {
       try {
-        const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=10000");
-        if (!res.ok) throw new Error("Failed to fetch Pokémon list");
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+        if (!res.ok) throw new Error("Failed to fetch Pokémon details");
         const json = await res.json();
-        setData(json.results);
+        setData(json);
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message);
@@ -24,8 +24,8 @@ export function useAllPokemonList() {
       }
     };
 
-    fetchAllPokemon();
-  }, []);
+    fetchDetails();
+  }, [name]);
 
   return { data, loading, error };
 }
