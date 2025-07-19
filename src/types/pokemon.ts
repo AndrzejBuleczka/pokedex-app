@@ -19,7 +19,6 @@ export interface PokemonType {
 }
 
 export interface PokemonAbility {
-  type: any;
   ability: {
     name: string;
     url: string;
