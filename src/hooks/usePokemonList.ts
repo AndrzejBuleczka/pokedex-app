@@ -1,5 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useLayoutEffect } from "react";
 import type { PokemonBasic } from "../types/pokemon";
+
+const STORAGE_KEY = "pokemon_list_state";
+
+interface PokemonListState {
+  pokemons: PokemonBasic[];
+  page: number;
+  scrollY: number;
+}
 
 export function usePokemonList(search: string) {
   const [pokemons, setPokemons] = useState<PokemonBasic[]>([]);
@@ -26,16 +34,50 @@ export function usePokemonList(search: string) {
     }
   };
 
+  // --- Restore state from sessionStorage ---
+  useLayoutEffect(() => {
+    if (search.length > 0) return;
+
+    const savedState = sessionStorage.getItem(STORAGE_KEY);
+    if (savedState) {
+      const { pokemons, page, scrollY }: PokemonListState =
+        JSON.parse(savedState);
+      setPokemons(pokemons);
+      setPage(page);
+      requestAnimationFrame(() => {
+        window.scrollTo(0, scrollY);
+      });
+      return;
+    }
+
+    fetchPokemon(1);
+  }, [search]);
+
+  // --- Save state on unmount ---
+  useEffect(() => {
+    return () => {
+      sessionStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ pokemons, page, scrollY: window.scrollY })
+      );
+    };
+  }, [pokemons, page]);
+
+  // Reset list when search changes (if clearing search)
   useEffect(() => {
     if (search.length < 3) {
-      setPokemons([]);
-      setPage(1);
-      fetchPokemon(1);
+      // If search is cleared, reset list and refetch page 1
+      if (pokemons.length === 0) {
+        setPokemons([]);
+        setPage(1);
+        fetchPokemon(1);
+      }
     }
   }, [search]);
 
+  // Infinite scroll observer
   useEffect(() => {
-    if (search.length >= 3) return;
+    if (search.length >= 3) return; // disable infinite scroll when searching
 
     const sentinel = observerRef.current;
     if (!sentinel) return;
@@ -55,6 +97,7 @@ export function usePokemonList(search: string) {
     };
   }, [loading, search]);
 
+  // Fetch next pages
   useEffect(() => {
     if (page > 1 && search.length < 3) {
       fetchPokemon(page);
