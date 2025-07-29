@@ -90,6 +90,7 @@ src/
 - [Vite](https://vitejs.dev/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [React Router](https://reactrouter.com/)
+- [Highcharts](https://www.highcharts.com/)
 - [PokeAPI](https://pokeapi.co/)
 
 ---
