@@ -1,10 +1,11 @@
 import { useParams, useNavigate } from "react-router-dom";
+import PokemonPolarChart from "../components/PokemonPolarChart";
 import { usePokemonDetails } from "../hooks/usePokemonDetails";
 import type {
   PokemonAbility,
-  PokemonStat,
   PokemonType
 } from "../types/pokemon";
+import { getTypeColor } from "../utils/colors";
 
 export default function PokemonDetails() {
   const { name } = useParams<{ name: string }>();
@@ -66,14 +67,12 @@ export default function PokemonDetails() {
           {/* Stats */}
           <div className="mt-6">
             <h2 className="font-semibold mb-2">Stats:</h2>
-            <div>
-              {pokemon?.stats.map((s: PokemonStat) => (
-                <div key={s.stat.name} className="flex justify-between mb-2">
-                  <span className="capitalize">{s.stat.name}</span>
-                  <span>{s.base_stat}</span>
-                </div>
-              ))}
-            </div>
+            {pokemon?.stats && (
+              <PokemonPolarChart
+                stats={pokemon.stats}
+                typeColor={getTypeColor(pokemon.types[0].type.name)}
+              />
+            )}
           </div>
         </div>
       </div>
