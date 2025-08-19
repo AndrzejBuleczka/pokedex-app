@@ -1,11 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
 import PokemonPolarChart from "../components/PokemonPolarChart";
 import { usePokemonDetails } from "../hooks/usePokemonDetails";
-import type {
-  PokemonAbility,
-  PokemonType
-} from "../types/pokemon";
+import type { PokemonAbility, PokemonType } from "../types/pokemon";
 import { getTypeColor } from "../utils/colors";
+import TypeEffectivenessHeatmap from "../components/TypeEffectivenessHeatmap";
 
 export default function PokemonDetails() {
   const { name } = useParams<{ name: string }>();
@@ -72,6 +70,13 @@ export default function PokemonDetails() {
                 stats={pokemon.stats}
                 typeColor={getTypeColor(pokemon.types[0].type.name)}
               />
+            )}
+          </div>
+
+          <div>
+            <h2 className="font-semibold mb-2">Type Effectiveness:</h2>
+            {pokemon?.types && (
+              <TypeEffectivenessHeatmap types={pokemon.types} />
             )}
           </div>
         </div>

@@ -5,7 +5,6 @@ import type { PokemonStat } from "../types/pokemon";
 
 // Initialize radar chart support
 
-
 type Props = {
   stats: PokemonStat[];
   typeColor?: string; // Optional color based on Pokémon type
@@ -20,7 +19,10 @@ const statLabels = [
   "speed"
 ];
 
-export default function PokemonPolarChart({ stats, typeColor = "#4f46e5" }: Props) {
+export default function PokemonPolarChart({
+  stats,
+  typeColor = "#4f46e5"
+}: Props) {
   const chartStats = statLabels.map((label) => {
     const found = stats.find((s) => s.stat.name === label);
     return found?.base_stat || 0;
@@ -31,9 +33,9 @@ export default function PokemonPolarChart({ stats, typeColor = "#4f46e5" }: Prop
       polar: true,
       type: "line",
       backgroundColor: "transparent",
-      height: 350,
+      height: 250
     },
-    title: { text: "Base Stats", style: { display: "none" } },
+    title: { text: "" },
     pane: { size: "80%" },
     xAxis: {
       categories: statLabels.map((l) => l.replace("-", " ")),
@@ -47,10 +49,12 @@ export default function PokemonPolarChart({ stats, typeColor = "#4f46e5" }: Prop
       min: 0,
       max: 160,
       tickInterval: 40,
+      labels: { style: { fontSize: "11px" } }
     },
     tooltip: {
       shared: true,
-      pointFormat: "<span style=\"color:{series.color}\">{point.category}</span>: <b>{point.y}</b><br/>",
+      pointFormat:
+        '<span style="color:{series.color}">{point.category}</span>: <b>{point.y}</b><br/>'
     },
     series: [
       {
@@ -59,7 +63,7 @@ export default function PokemonPolarChart({ stats, typeColor = "#4f46e5" }: Prop
         type: "line",
         color: typeColor,
         pointPlacement: "on",
-        lineWidth: 2,
+        lineWidth: 2
       }
     ],
     credits: { enabled: false },
